@@ -21,7 +21,7 @@ function Navigation() {
                 arial-label="Furni navigation bar"
             >
                 <div className="container">
-                    <a className="navbar-brand" href="index.html">Furni<span>.</span></a>
+                    <Link className="navbar-brand" to="/">Furni<span>.</span></Link>
 
                     <button
                         className="navbar-toggler"

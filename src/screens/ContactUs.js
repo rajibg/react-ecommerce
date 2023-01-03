@@ -1,20 +1,22 @@
 import React from 'react';
 import { useState } from 'react';
 import Joi from "joi";
+import { successMsg } from '../services/notificationService';
 
 function ContactUs() {
-    const [formValues, setFormvalues] = useState({
+    const initValues = {
         firstName: '',
         lastName: '',
         email: '',
         message: '',
-    });
+    }
+    const [formValues, setFormvalues] = useState(initValues);
     const [errors, setErrors] = useState({});
     const [isSubmit, setSubmitting] = useState(false);
     const schema = {
         firstName: Joi.string().required().min(2).label("First Name"),
-        lastName: Joi.any().equal(Joi.ref('firstName')).required().label("Last Name").messages({ 'any.only': '{{#label}} does not match' }),
-        // lastName: Joi.string().required().label("Last Name"),
+        // lastName: Joi.any().equal(Joi.ref('firstName')).required().label("Last Name").messages({ 'any.only': '{{#label}} does not match' }),
+        lastName: Joi.string().required().label("Last Name"),
         email: Joi.string().email({ tlds: { allow: false } }).required().label("Email"),
         message: Joi.string().required(),
     }
@@ -61,6 +63,8 @@ function ContactUs() {
             // setSubmitting(true)
             //history.replace('/blog');
             console.log(formValues)
+            successMsg("Thank you for contacting us.");
+            setFormvalues(initValues)
         }
     };
 
@@ -150,7 +154,7 @@ function ContactUs() {
 
                                 <div className="form-group mb-5">
                                     <label className="text-black" htmlFor="message">Message</label>
-                                    <textarea className="form-control" id="message" name="message" cols="30" rows="5" defaultValue={formValues.message} onChange={handelchange}></textarea>
+                                    <textarea className="form-control" id="message" name="message" cols="30" rows="5" value={formValues.message} onChange={handelchange} />
                                     {errors.message && (
                                         <p className="helper-block">{errors.message}</p>
                                     )}

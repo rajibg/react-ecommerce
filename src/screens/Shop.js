@@ -7,7 +7,7 @@ function Shop() {
 
     const products = useSelector(state => state.product.products);
     const dispatch = useDispatch();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         setLoading(true)
         dispatch(fetchProducts())
@@ -41,17 +41,15 @@ function Shop() {
             <div className="container">
                 <div className="row">
                     {
-                        products.length > 0 && products.map(product => {
-                            return (<ProductItem product={product} key={product.id} />)
-                        })
-                    }
-
-                    {
                         products.length === 0 && <div className="col-12">
                             <p className='empty-cart'>No products found !</p>
                         </div>
                     }
-
+                    {
+                        products.length > 0 && products.map(product => {
+                            return (<ProductItem product={product} key={product.id} />)
+                        })
+                    }
                 </div>
             </div>
         </div>
