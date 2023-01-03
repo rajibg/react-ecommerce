@@ -1,6 +1,69 @@
 import React from 'react';
+import { useState } from 'react';
+import Joi from "joi";
 
-function ContactUs(props) {
+function ContactUs() {
+    const [formValues, setFormvalues] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: '',
+    });
+    const [errors, setErrors] = useState({});
+    const [isSubmit, setSubmitting] = useState(false);
+    const schema = {
+        firstName: Joi.string().required().min(2).label("First Name"),
+        lastName: Joi.any().equal(Joi.ref('firstName')).required().label("Last Name").messages({ 'any.only': '{{#label}} does not match' }),
+        // lastName: Joi.string().required().label("Last Name"),
+        email: Joi.string().email({ tlds: { allow: false } }).required().label("Email"),
+        message: Joi.string().required(),
+    }
+
+    const handelchange = (e) => {
+        const { name, value } = e.target;
+        setFormvalues({ ...formValues, [name]: value });
+        validateProperty({ name, value });
+    };
+
+    const validateAll = () => {
+        const { error } = Joi.object(schema).validate(formValues, {
+            abortEarly: false,
+        })
+
+        if (!error) return null;
+        const verrors = {};
+        for (let item of error.details) {
+            verrors[item.path[0]] = item.message.replace(/['"]+/g, '');
+        }
+        setErrors({ ...verrors });
+        return verrors;
+    };
+
+    const validateProperty = ({ name, value }) => {
+        const values = name === 'lastName' && formValues.firstName !== '' ? { 'firstName': formValues.firstName, [name]: value } : { [name]: value };
+        const singleSchema = name === 'lastName' && formValues.firstName !== '' ? { ['firstName']: schema['firstName'], [name]: schema[name] } : { [name]: schema[name] };
+        const { error } = Joi.object(singleSchema).validate(values, {
+            abortEarly: false,
+        });
+
+        if (error) {
+            setErrors({ ...errors, [name]: error.details[0].message.replace(/['"]+/g, '') });
+        } else {
+            delete errors[name];
+            setErrors(errors);
+        }
+    };
+
+    const handelSubmit = (e) => {
+        e.preventDefault();
+        const verrors = validateAll();
+        if (!verrors) {
+            // setSubmitting(true)
+            //history.replace('/blog');
+            console.log(formValues)
+        }
+    };
+
     return (
         <div className="untree_co-section">
             <div className="container">
@@ -53,32 +116,47 @@ function ContactUs(props) {
                                 </div>
                             </div>
 
-                            <form>
+                            <form onSubmit={handelSubmit}>
                                 <div className="row">
                                     <div className="col-6">
                                         <div className="form-group">
                                             <label className="text-black" htmlFor="fname">First name</label>
-                                            <input type="text" className="form-control" id="fname" />
+                                            <input type="text" className="form-control" name='firstName' onChange={handelchange}
+                                                value={formValues.firstName} id="fname" />
+                                            {errors.firstName && (
+                                                <p className="helper-block">{errors.firstName}</p>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="col-6">
                                         <div className="form-group">
                                             <label className="text-black" htmlFor="lname">Last name</label>
-                                            <input type="text" className="form-control" id="lname" />
+                                            <input type="text" className="form-control"
+                                                id="lname" name='lastName' onChange={handelchange}
+                                                value={formValues.lastName} />
+                                            {errors.lastName && (
+                                                <p className="helper-block">{errors.lastName}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                                 <div className="form-group">
                                     <label className="text-black" htmlFor="email">Email address</label>
-                                    <input type="email" className="form-control" id="email" />
+                                    <input type="email" className="form-control" id="email" name='email' onChange={handelchange} value={formValues.email} />
+                                    {errors.email && (
+                                        <p className="helper-block">{errors.email}</p>
+                                    )}
                                 </div>
 
                                 <div className="form-group mb-5">
                                     <label className="text-black" htmlFor="message">Message</label>
-                                    <textarea name="" className="form-control" id="message" cols="30" rows="5"></textarea>
+                                    <textarea className="form-control" id="message" name="message" cols="30" rows="5" defaultValue={formValues.message} onChange={handelchange}></textarea>
+                                    {errors.message && (
+                                        <p className="helper-block">{errors.message}</p>
+                                    )}
                                 </div>
 
-                                <button type="submit" className="btn btn-primary-hover-outline">Send Message</button>
+                                <button type="submit" disabled={isSubmit} className="btn btn-primary-hover-outline">Send Message</button>
                             </form>
 
                         </div>
