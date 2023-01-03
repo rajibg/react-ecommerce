@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 function Navigation() {
     const location = useLocation();
-    const cartCount = useSelector(state => state.cart.total)
+    const cartCount = useSelector(state => state.cart.totalItem)
     const [shownav, setShowNav] = useState(false);
     const handleShowNavber = () => {
         setShowNav(!shownav)

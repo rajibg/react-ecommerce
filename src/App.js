@@ -1,19 +1,27 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { lazy, Suspense } from 'react';
-import { Provider } from 'react-redux';
+import { Component, lazy, Suspense, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Layout from './components/Layout';
 import ContactUs from './screens/ContactUs';
 import Home from './screens/Home';
-import store from './store'
+import { fetchCarts } from './store/actions/productAction';
 
 const Shop = lazy(() => import('./screens/Shop'))
 const Cart = lazy(() => import('./screens/Cart'))
 
-function App() {
-  return (
-    <Provider store={store}>
+class App extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidMount() {
+    this.props.initCartData();
+  }
+
+  render() {
+    return (
       <BrowserRouter>
         <Layout>
           <Suspense fallback={<div>Loading...</div>}>
@@ -26,8 +34,13 @@ function App() {
           </Suspense>
         </Layout >
       </BrowserRouter>
-    </Provider>
-  );
+    );
+  }
 }
 
-export default App;
+const mapDispatchToProps = (dispatch) => ({
+  initCartData: () => dispatch(fetchCarts())
+})
+
+
+export default connect(null, mapDispatchToProps)(App);

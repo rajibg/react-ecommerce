@@ -1032,3 +1032,9 @@ textarea {
   border-radius: 50%;
   background: rgba(59, 93, 80, 0.2);
 }
+
+.empty-cart {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}

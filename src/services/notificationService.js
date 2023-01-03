@@ -1,17 +1,25 @@
 import { toast } from 'react-toastify';
 
 export const errorMsg = (msg) => {
-    toast.error(msg ?? "Error Notification !");
+    toast.error(msg ?? "Error Notification !", {
+        position: toast.POSITION.BOTTOM_LEFT
+    });
 }
 export const successMsg = (msg) => {
-    toast.success(msg ?? "Success Notification !");
+    toast.success(msg ?? "Success Notification !", {
+        position: toast.POSITION.BOTTOM_LEFT
+    });
 }
 export const warnMsg = (msg) => {
-    toast.warn(msg ?? "Warn Notification !");
+    toast.warn(msg ?? "Warn Notification !", {
+        position: toast.POSITION.BOTTOM_LEFT
+    });
 }
 
 export const infoMsg = (msg) => {
-    toast(msg ?? "Info Notification !");
+    toast(msg ?? "Info Notification !", {
+        position: toast.POSITION.BOTTOM_LEFT
+    });
 }
 
 export const notify = () => {

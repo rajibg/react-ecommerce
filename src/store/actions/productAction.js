@@ -24,6 +24,11 @@ export const addToCart = (data) => {
 export const fetchCarts = () => {
     return {
         type: actionType.FETCH_CARTS,
-        payload: localStorage.getItem('carts')
+    }
+}
+export const removeFromCart = (product_id) => {
+    return {
+        type: actionType.REMOVE_FROM_CART,
+        payload: { id: product_id }
     }
 }

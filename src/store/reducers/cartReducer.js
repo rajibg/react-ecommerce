@@ -1,6 +1,7 @@
 import actionType from "../actionType";
 
-const CartReducer = (state = { loading: false, cart: [], total: 0 }, action) => {
+const CartReducer = (state = { loading: false, cart: [], totalItem: 0, totalPrice: 0 }, action) => {
+    let totalPrice = 0;
     switch (action.type) {
         case actionType.SET_CART:
             const cartData = state.cart;
@@ -8,9 +9,12 @@ const CartReducer = (state = { loading: false, cart: [], total: 0 }, action) => 
             if (hasItemInCartData.length > 0) {
                 hasItemInCartData[0].quantity = hasItemInCartData[0].quantity + action.payload.quantity;
                 const otherItems = cartData.filter(item => item.id !== action.payload.id);
-                return { ...state, cart: [...otherItems, ...hasItemInCartData], loading: false }
+                let totalPrice = state.totalPrice + (action.payload.quantity * action.payload.price)
+                return { ...state, cart: [...otherItems, ...hasItemInCartData], loading: false, totalPrice }
             }
-            return { ...state, cart: [...state.cart, action.payload], total: state.total + 1, loading: false }
+            const mergeCartData = [...state.cart, action.payload];
+            totalPrice = calculateTotalPrice(mergeCartData)
+            return { ...state, totalPrice, cart: mergeCartData, totalItem: state.totalItem + 1, loading: false }
             break;
         case actionType.ADD_TO_CART_LOADING:
             return { ...state, loading: true }
@@ -18,21 +22,27 @@ const CartReducer = (state = { loading: false, cart: [], total: 0 }, action) => 
         case actionType.FETCH_CARTS:
             if (state.cart.length === 0 && localStorage.getItem('cartData')) {
                 const localCartData = JSON.parse(localStorage.getItem('cartData'));
-                return { ...state, cart: localCartData, total: localCartData.length }
+                totalPrice = calculateTotalPrice(localCartData)
+                return { ...state, cart: localCartData, totalItem: localCartData.length }
             }
-            return state
+            totalPrice = calculateTotalPrice(state.cart)
+            return { ...state, totalPrice }
             break;
         case actionType.REMOVE_FROM_CART:
-
             const notIncartData = state.cart.filter(item => item.id !== action.payload.id);
-            console.log(notIncartData)
             localStorage.setItem('cartData', JSON.stringify(notIncartData))
-            return { ...state, cart: notIncartData, total: notIncartData.length, loading: true }
+            totalPrice = calculateTotalPrice(notIncartData)
+            return { ...state, totalPrice, cart: notIncartData, totalItem: notIncartData.length, loading: true }
             break;
         default:
             return state
     }
 
+}
+
+
+const calculateTotalPrice = (cartData) => {
+    return cartData.reduce((accumulator, item) => accumulator + (item.quantity * item.price), 0)
 }
 
 

@@ -27,7 +27,7 @@ function Shop() {
                 <div className="container">
                     <div className="row">
                         <div className="col-12">
-                            <p>Loading ....</p>
+                            <p className='empty-cart'>Loading ....</p>
                         </div>
                     </div>
                 </div>
@@ -48,7 +48,7 @@ function Shop() {
 
                     {
                         products.length === 0 && <div className="col-12">
-                            <p >No products found !</p>
+                            <p className='empty-cart'>No products found !</p>
                         </div>
                     }
 
